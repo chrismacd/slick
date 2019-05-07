@@ -56,6 +56,7 @@
                 },
                 dots: false,
                 dotsClass: 'slick-dots',
+                dotsClickable: true,
                 draggable: true,
                 easing: 'linear',
                 edgeFriction: 0.35,
@@ -1187,7 +1188,13 @@
                     targetLeft = targetSlide[0] ? targetSlide[0].offsetLeft * -1 : 0;
                 }
 
-                targetLeft += (_.$list.width() - targetSlide.outerWidth()) / 2;
+                /* Chris mod to center even number */
+                if (_.options.slidesToShow % 2 === 0) {
+                    var nextSlide = $(targetSlide).next();
+                    targetLeft += (_.$list.width() - targetSlide.outerWidth() - nextSlide.outerWidth()) / 2;
+                } else {
+                    targetLeft += (_.$list.width() - targetSlide.outerWidth()) / 2;
+                }
             }
         }
 
@@ -1416,8 +1423,12 @@
     };
 
     Slick.prototype.initDotEvents = function() {
-
         var _ = this;
+
+         /* Chris mod to prevent dots being clickable */
+        if (_.options.dotsClickable === false) {
+            return false;
+        }
 
         if (_.options.dots === true && _.slideCount > _.options.slidesToShow) {
             $('li', _.$dots).on('click.slick', {
